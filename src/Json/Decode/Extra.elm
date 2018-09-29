@@ -1,4 +1,4 @@
-module Json.Decode.Extra exposing (require, default, defaultAt)
+module Json.Decode.Extra exposing (required, optional, optionalAt)
 
 {-|
 
@@ -10,7 +10,7 @@ Experimental API for building JSON decoders.
 
 ## Decoding fields
 
-@docs require, default, defaultAt
+@docs required, optional, optionalAt
 
 -}
 
@@ -28,9 +28,9 @@ import Json.Decode as Decode exposing (Decoder)
 
     userDecoder : Decoder User
     userDecoder =
-        require int "id" <| \id ->
-        require int "followers" <| \followers ->
-        require string "email" <| \email ->
+        required int "id" <| \id ->
+        required int "followers" <| \followers ->
+        required string "email" <| \email ->
         succeed { id = id, followers = followers, email = email }
 
     result : Result String User
@@ -45,8 +45,8 @@ import Json.Decode as Decode exposing (Decoder)
     --> Ok { id = 123, followers = 42, email = "sam@example.com" }
 
 -}
-require : Decoder a -> String -> (a -> Decoder b) -> Decoder b
-require valDecoder fieldName andThenCallback =
+required : Decoder a -> String -> (a -> Decoder b) -> Decoder b
+required valDecoder fieldName andThenCallback =
     Decode.field fieldName valDecoder
         |> Decode.andThen andThenCallback
 
@@ -66,9 +66,9 @@ entirely.
 
     userDecoder : Decoder User
     userDecoder =
-        require int "id" <| \id ->
-        default 0 int "followers" <| \followers ->
-        require string "email" <| \email ->
+        required int "id" <| \id ->
+        optional 0 int "followers" <| \followers ->
+        required string "email" <| \email ->
         succeed { id = id, followers = followers, email = email }
 
     result : Result String User
@@ -88,27 +88,27 @@ values if you need to:
 
     userDecoder : Decoder User
     userDecoder =
-        require int "id" <| \id ->
-        default 0 (oneOf [ int, null 0 ]) "followers" <| \followers ->
-        require string "email" <| \email ->
+        required int "id" <| \id ->
+        optional 0 (oneOf [ int, null 0 ]) "followers" <| \followers ->
+        required string "email" <| \email ->
         succeed { id = id, followers = followers, email = email }
 
 -}
-default : a -> Decoder a -> String -> (a -> Decoder b) -> Decoder b
-default defaultVal valDecoder fieldName andThenCallback =
-    optionalDecoder (Decode.field fieldName Decode.value) valDecoder defaultVal
+optional : a -> Decoder a -> String -> (a -> Decoder b) -> Decoder b
+optional optionalVal valDecoder fieldName andThenCallback =
+    optionalDecoder (Decode.field fieldName Decode.value) valDecoder optionalVal
         |> Decode.andThen andThenCallback
 
 
 {-| Decode an optional nested field.
 
-This is the same as `default` except it uses `Json.Decode.at` in place of
+This is the same as `optional` except it uses `Json.Decode.at` in place of
 `Json.Decode.field`.
 
 -}
-defaultAt : a -> Decoder a -> List String -> (a -> Decoder b) -> Decoder b
-defaultAt defaultVal valDecoder path andThenCallback =
-    optionalDecoder (Decode.at path Decode.value) valDecoder defaultVal
+optionalAt : a -> Decoder a -> List String -> (a -> Decoder b) -> Decoder b
+optionalAt optionalVal valDecoder path andThenCallback =
+    optionalDecoder (Decode.at path Decode.value) valDecoder optionalVal
         |> Decode.andThen andThenCallback
 
 
