@@ -28,13 +28,10 @@ import Json.Decode as Decode exposing (Decoder)
 
     userDecoder : Decoder User
     userDecoder =
-        require int "id" <|
-            \id ->
-                require int "followers" <|
-                    \followers ->
-                        require string "email" <|
-                            \email ->
-                                succeed { id = id, followers = followers, email = email }
+        require int "id" <| \id ->
+        require int "followers" <| \followers ->
+        require string "email" <| \email ->
+        succeed { id = id, followers = followers, email = email }
 
     result : Result String User
     result =
@@ -81,13 +78,10 @@ entirely.
 
     userDecoder : Decoder User
     userDecoder =
-        require int "id" <|
-            \id ->
-                default 0 int "followers" <|
-                    \followers ->
-                        require string "email" <|
-                            \email ->
-                                succeed { id = id, followers = followers, email = email }
+        require int "id" <| \id ->
+        default 0 int "followers" <| \followers ->
+        require string "email" <| \email ->
+        succeed { id = id, followers = followers, email = email }
 
     result : Result String User
     result =
@@ -106,13 +100,10 @@ values if you need to:
 
     userDecoder : Decoder User
     userDecoder =
-        require int "id" <|
-            \id ->
-                default 0 (oneOf [ int, null 0 ]) "followers" <|
-                    \followers ->
-                        require string "email" <|
-                            \email ->
-                                succeed { id = id, followers = followers, email = email }
+        require int "id" <| \id ->
+        default 0 (oneOf [ int, null 0 ]) "followers" <| \followers ->
+        require string "email" <| \email ->
+        succeed { id = id, followers = followers, email = email }
 
 -}
 default : String -> Decoder a -> a -> (a -> Decoder b) -> Decoder b
