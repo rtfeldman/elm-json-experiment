@@ -1,4 +1,4 @@
-module Json.Decode.Extra exposing (require, default, defaultAt)
+module Json.Decode.Extra exposing (require, requireAt, default, defaultAt)
 
 {-|
 
@@ -10,7 +10,7 @@ Experimental API for building JSON decoders.
 
 ## Decoding fields
 
-@docs require, default, defaultAt
+@docs require, requireAt, default, defaultAt
 
 -}
 
@@ -28,10 +28,13 @@ import Json.Decode as Decode exposing (Decoder)
 
     userDecoder : Decoder User
     userDecoder =
-        require int "id" <| \id ->
-        require int "followers" <| \followers ->
-        require string "email" <| \email ->
-        succeed { id = id, followers = followers, email = email }
+        require int "id" <|
+            \id ->
+                require int "followers" <|
+                    \followers ->
+                        require string "email" <|
+                            \email ->
+                                succeed { id = id, followers = followers, email = email }
 
     result : Result String User
     result =
@@ -51,6 +54,18 @@ require valDecoder fieldName andThenCallback =
         |> Decode.andThen andThenCallback
 
 
+{-| Decode a required nested field.
+
+This is the same as `required` except it uses `Json.Decode.at` in place of
+`Json.Decode.field`.
+
+-}
+requireAt : Decoder a -> List String -> (a -> Decoder b) -> Decoder b
+requireAt valDecoder path andThenCallback =
+    Decode.at path valDecoder
+        |> Decode.andThen andThenCallback
+
+
 {-| Decode a field that may be missing or have a null value. If the field is
 missing, then it decodes as the `fallback` value. If the field is present,
 then `valDecoder` is used to decode its value. If `valDecoder` fails on a
@@ -66,10 +81,13 @@ entirely.
 
     userDecoder : Decoder User
     userDecoder =
-        require int "id" <| \id ->
-        default 0 int "followers" <| \followers ->
-        require string "email" <| \email ->
-        succeed { id = id, followers = followers, email = email }
+        require int "id" <|
+            \id ->
+                default 0 int "followers" <|
+                    \followers ->
+                        require string "email" <|
+                            \email ->
+                                succeed { id = id, followers = followers, email = email }
 
     result : Result String User
     result =
@@ -88,10 +106,13 @@ values if you need to:
 
     userDecoder : Decoder User
     userDecoder =
-        require int "id" <| \id ->
-        default 0 (oneOf [ int, null 0 ]) "followers" <| \followers ->
-        require string "email" <| \email ->
-        succeed { id = id, followers = followers, email = email }
+        require int "id" <|
+            \id ->
+                default 0 (oneOf [ int, null 0 ]) "followers" <|
+                    \followers ->
+                        require string "email" <|
+                            \email ->
+                                succeed { id = id, followers = followers, email = email }
 
 -}
 default : a -> Decoder a -> String -> (a -> Decoder b) -> Decoder b
