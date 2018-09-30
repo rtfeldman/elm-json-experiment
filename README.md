@@ -10,7 +10,7 @@ purpose of this package is to facilitate trying them out and learning more.
 ### Goal of the experiment
 
 Address the same use cases as `elm-json-decode-pipeline` in a way that's easier
-to customize and less error-prone.
+to customize, easier to understand, and less error-prone.
 
 ### Background
 
