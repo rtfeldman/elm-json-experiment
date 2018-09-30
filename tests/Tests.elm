@@ -42,81 +42,65 @@ all =
         "Json.Decode.Pipeline"
         [ test "should decode basic example" <|
             \() ->
-                (require "a" string <|
-                    \a ->
-                        require "b" string <|
-                            \b ->
-                                succeed ( a, b )
+                (require "a" string <| \a ->
+                 require "b" string <| \b ->
+                 succeed ( a, b )
                 )
                     |> runWith """{"a":"foo","b":"bar"}"""
                     |> Expect.equal (Ok ( "foo", "bar" ))
         , test "should decode requireAt fields" <|
             \() ->
-                (requireAt [ "a" ] string <|
-                    \a ->
-                        requireAt [ "b", "c" ] string <|
-                            \b ->
-                                succeed ( a, b )
+                (requireAt [ "a" ] string <| \a ->
+                 requireAt [ "b", "c" ] string <| \b ->
+                 succeed ( a, b )
                 )
                     |> runWith """{"a":"foo","b":{"c":"bar"}}"""
                     |> Expect.equal (Ok ( "foo", "bar" ))
         , test "should decode defaultAt fields" <|
             \() ->
-                (defaultAt [ "a", "b" ] string "--" <|
-                    \a ->
-                        defaultAt [ "x", "y" ] string "--" <|
-                            \b ->
-                                succeed ( a, b )
+                (defaultAt [ "a", "b" ] string "--" <| \a ->
+                 defaultAt [ "x", "y" ] string "--" <| \b ->
+                 succeed ( a, b )
                 )
                     |> runWith """{"a":{},"x":{"y":"bar"}}"""
                     |> Expect.equal (Ok ( "--", "bar" ))
         , test "default succeeds if the field is not present" <|
             \() ->
-                (default "a" string "--" <|
-                    \a ->
-                        default "x" string "--" <|
-                            \b ->
-                                succeed ( a, b )
+                (default "a" string "--" <| \a ->
+                 default "x" string "--" <| \b ->
+                 succeed ( a, b )
                 )
                     |> runWith """{"x":"five"}"""
                     |> Expect.equal (Ok ( "--", "five" ))
         , test "default succeeds with fallback if the field is present but null" <|
             \() ->
-                (default "a" string "--" <|
-                    \a ->
-                        default "x" string "--" <|
-                            \b ->
-                                succeed ( a, b )
+                (default "a" string "--" <| \a ->
+                 default "x" string "--" <| \b ->
+                 succeed ( a, b )
                 )
                     |> runWith """{"a":null,"x":"five"}"""
                     |> Expect.equal (Ok ( "--", "five" ))
         , test "default succeeds with result of the given decoder if the field is null and the decoder decodes nulls" <|
             \() ->
-                (default "a" (null "null") "--" <|
-                    \a ->
-                        default "x" string "--" <|
-                            \b ->
-                                succeed ( a, b )
+                (default "a" (null "null") "--" <| \a ->
+                 default "x" string "--" <| \b ->
+                 succeed ( a, b )
                 )
                     |> runWith """{"a":null,"x":"five"}"""
                     |> Expect.equal (Ok ( "null", "five" ))
         , test "default fails if the field is present but doesn't decode" <|
             \() ->
-                (default "a" string "--" <|
-                    \a ->
-                        default "x" string "--" <|
-                            \b ->
-                                succeed ( a, b )
+                (default "a" string "--" <| \a ->
+                 default "x" string "--" <| \b ->
+                 succeed ( a, b )
                 )
                     |> runWith """{"x":5}"""
                     |> expectErr
         , test "defaultAt fails if the field is present but doesn't decode" <|
             \() ->
-                (defaultAt [ "a", "b" ] string "--" <|
-                    \a ->
-                        defaultAt [ "x", "y" ] string "--" <|
-                            \b ->
-                                succeed ( a, b )
+                (defaultAt [ "a", "b" ] string "--" <| \a ->
+                 defaultAt [ "x", "y" ] string "--" <| \b ->
+                 succeed ( a, b )
                 )
                     |> runWith """{"a":{},"x":{"y":5}}"""
                     |> expectErr
