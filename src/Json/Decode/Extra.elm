@@ -48,8 +48,8 @@ import Json.Decode as Decode exposing (Decoder)
     --> Ok { id = 123, followers = 42, email = "sam@example.com" }
 
 -}
-require : Decoder a -> String -> (a -> Decoder b) -> Decoder b
-require valDecoder fieldName andThenCallback =
+require : String -> Decoder a -> (a -> Decoder b) -> Decoder b
+require fieldName valDecoder andThenCallback =
     Decode.field fieldName valDecoder
         |> Decode.andThen andThenCallback
 
@@ -60,8 +60,8 @@ This is the same as `required` except it uses `Json.Decode.at` in place of
 `Json.Decode.field`.
 
 -}
-requireAt : Decoder a -> List String -> (a -> Decoder b) -> Decoder b
-requireAt valDecoder path andThenCallback =
+requireAt : List String -> Decoder a -> (a -> Decoder b) -> Decoder b
+requireAt path valDecoder andThenCallback =
     Decode.at path valDecoder
         |> Decode.andThen andThenCallback
 
@@ -115,8 +115,8 @@ values if you need to:
                                 succeed { id = id, followers = followers, email = email }
 
 -}
-default : a -> Decoder a -> String -> (a -> Decoder b) -> Decoder b
-default defaultVal valDecoder fieldName andThenCallback =
+default : String -> Decoder a -> a -> (a -> Decoder b) -> Decoder b
+default fieldName valDecoder defaultVal andThenCallback =
     optionalDecoder (Decode.field fieldName Decode.value) valDecoder defaultVal
         |> Decode.andThen andThenCallback
 
@@ -127,8 +127,8 @@ This is the same as `default` except it uses `Json.Decode.at` in place of
 `Json.Decode.field`.
 
 -}
-defaultAt : a -> Decoder a -> List String -> (a -> Decoder b) -> Decoder b
-defaultAt defaultVal valDecoder path andThenCallback =
+defaultAt : List String -> Decoder a -> a -> (a -> Decoder b) -> Decoder b
+defaultAt path valDecoder defaultVal andThenCallback =
     optionalDecoder (Decode.at path Decode.value) valDecoder defaultVal
         |> Decode.andThen andThenCallback
 

@@ -42,9 +42,9 @@ all =
         "Json.Decode.Pipeline"
         [ test "should decode basic example" <|
             \() ->
-                (require string "a" <|
+                (require "a" string <|
                     \a ->
-                        require string "b" <|
+                        require "b" string <|
                             \b ->
                                 succeed ( a, b )
                 )
@@ -52,9 +52,9 @@ all =
                     |> Expect.equal (Ok ( "foo", "bar" ))
         , test "should decode requireAt fields" <|
             \() ->
-                (requireAt string [ "a" ] <|
+                (requireAt [ "a" ] string <|
                     \a ->
-                        requireAt string [ "b", "c" ] <|
+                        requireAt [ "b", "c" ] string <|
                             \b ->
                                 succeed ( a, b )
                 )
@@ -62,9 +62,9 @@ all =
                     |> Expect.equal (Ok ( "foo", "bar" ))
         , test "should decode defaultAt fields" <|
             \() ->
-                (defaultAt "--" string [ "a", "b" ] <|
+                (defaultAt [ "a", "b" ] string "--" <|
                     \a ->
-                        defaultAt "--" string [ "x", "y" ] <|
+                        defaultAt [ "x", "y" ] string "--" <|
                             \b ->
                                 succeed ( a, b )
                 )
@@ -72,9 +72,9 @@ all =
                     |> Expect.equal (Ok ( "--", "bar" ))
         , test "default succeeds if the field is not present" <|
             \() ->
-                (default "--" string "a" <|
+                (default "a" string "--" <|
                     \a ->
-                        default "--" string "x" <|
+                        default "x" string "--" <|
                             \b ->
                                 succeed ( a, b )
                 )
@@ -82,9 +82,9 @@ all =
                     |> Expect.equal (Ok ( "--", "five" ))
         , test "default succeeds with fallback if the field is present but null" <|
             \() ->
-                (default "--" string "a" <|
+                (default "a" string "--" <|
                     \a ->
-                        default "--" string "x" <|
+                        default "x" string "--" <|
                             \b ->
                                 succeed ( a, b )
                 )
@@ -92,9 +92,9 @@ all =
                     |> Expect.equal (Ok ( "--", "five" ))
         , test "default succeeds with result of the given decoder if the field is null and the decoder decodes nulls" <|
             \() ->
-                (default "--" (null "null") "a" <|
+                (default "a" (null "null") "--" <|
                     \a ->
-                        default "--" string "x" <|
+                        default "x" string "--" <|
                             \b ->
                                 succeed ( a, b )
                 )
@@ -102,9 +102,9 @@ all =
                     |> Expect.equal (Ok ( "null", "five" ))
         , test "default fails if the field is present but doesn't decode" <|
             \() ->
-                (default "--" string "a" <|
+                (default "a" string "--" <|
                     \a ->
-                        default "--" string "x" <|
+                        default "x" string "--" <|
                             \b ->
                                 succeed ( a, b )
                 )
@@ -112,9 +112,9 @@ all =
                     |> expectErr
         , test "defaultAt fails if the field is present but doesn't decode" <|
             \() ->
-                (defaultAt "--" string [ "a", "b" ] <|
+                (defaultAt [ "a", "b" ] string "--" <|
                     \a ->
-                        defaultAt "--" string [ "x", "y" ] <|
+                        defaultAt [ "x", "y" ] string "--" <|
                             \b ->
                                 succeed ( a, b )
                 )
