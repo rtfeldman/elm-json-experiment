@@ -89,7 +89,7 @@ Much like how `else if` is an `else` followed by a nested `if` (except formatted
 This addresses all 3 of the previous concerns with `elm-json-decode-pipeline`:
 
 1. If I swap the order of `email` and `name` in my `type alias`, everything will continue to work correctly. This version is not at all coupled to the order in `type alias` because it does not use the type alias record constructor function.
-2. The types involved are variations on common ones. `require : String -> Decoder a -> (a -> Decoder b) -> Decoder b` is a flipped `andThen : (a -> Decoder b) -> Decoder a -> Decoder b` with an added `String` for the field name. Most of the package's implementation can be explained in a sentence: "`required` is a convenience function that calls `field` followed by `andThen`". Most of the rest can be explained as "`default` provides a default value to use if a field is missing."
+2. The types involved are variations on common ones. `require : String -> Decoder a -> (a -> Decoder b) -> Decoder b` is a flipped `andThen : (a -> Decoder b) -> Decoder a -> Decoder b` with an added `String` for the field name. Most of the package's implementation can be explained in a sentence: "`require` is a convenience function that calls `field` followed by `andThen`". Most of the rest can be explained as "`default` provides a default value to use if a field is missing."
 3. Customization is trivial. I can introduce a `let` in between any of these steps, and its results will be in scope for the final call to `succeed`.
 
 To illustrate the last point, here's a comparison of decoding into a custom type:
