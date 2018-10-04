@@ -133,7 +133,7 @@ already has `id`, `name,` and `username` in scope, so it can use them to
 `Decode.succeed` with a `User` record.
 
 We can make this read more like a schema if we use `<|`. The `<|` operator can
-take the place of parentheses. Here's an example:
+take the place of parentheses. These two lines of code do exactly the same thing:
 
 ```elm
 String.toLower (getStr something)
