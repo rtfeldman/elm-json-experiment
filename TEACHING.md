@@ -45,7 +45,7 @@ Decode.map String.toLower Decode.string
 
 This code returns a `Decoder String` which decodes a string, and then lowercases
 it. If decoding failed (for example because it tried to run this decoder on a
-number insetad of a string), then `String.toLower` will not get called.
+number instead of a string), then `String.toLower` would not get called.
 
 ## 3. `andThen`
 
